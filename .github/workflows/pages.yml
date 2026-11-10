@@ -26,6 +26,15 @@ jobs:
         with:
           lfs: true
 
+      - name: Verify PDF files are hydrated
+        shell: bash
+        run: |
+          test "$(find pdfs -type f \( -iname '*.pdf' \) | wc -l)" -eq 99
+          if grep -RIlq "version https://git-lfs.github.com/spec/v1" pdfs; then
+            echo "Git LFS pointers were not hydrated."
+            exit 1
+          fi
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

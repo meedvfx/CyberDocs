@@ -13,7 +13,6 @@
   var loading = document.getElementById("reader-loading");
   var error = document.getElementById("reader-error");
   var currentDocument;
-  var loadTimer;
 
   catalog.forEach(function (documentItem, index) {
     documentItem.number = index + 1;
@@ -69,40 +68,41 @@
     document.getElementById("reader-title").textContent = displayTitle(item);
     document.getElementById("download-link").href = pdfUrl(item);
     document.getElementById("page-number").value = 1;
+    if (!reader.open) reader.showModal();
+    loadDocument(1, "page-width");
+  }
+
+  function loadDocument(page, zoom) {
+    if (!currentDocument) return;
     loading.hidden = false;
     error.hidden = true;
     frame.hidden = true;
-    clearTimeout(loadTimer);
-    frame.src = pdfUrl(item) + "#page=1&zoom=page-width";
-    loadTimer = setTimeout(function () {
-      if (!frame.hidden) return;
+    fetch(pdfUrl(currentDocument), { headers: { Range: "bytes=0-4" }, cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("PDF request failed: " + response.status);
+        return response.arrayBuffer();
+      })
+      .then(function (buffer) {
+        var header = new TextDecoder().decode(new Uint8Array(buffer).slice(0, 5));
+        if (header !== "%PDF-") throw new Error("The server returned a Git LFS pointer instead of a PDF.");
+        frame.src = pdfUrl(currentDocument) + "#page=" + page + "&zoom=" + zoom;
+      })
+      .catch(function () {
       loading.hidden = true;
       error.hidden = false;
-    }, 10000);
-    if (!reader.open) reader.showModal();
+      });
   }
 
   function updateReaderView() {
-    if (!currentDocument) return;
     var page = Math.max(1, Number(document.getElementById("page-number").value) || 1);
-    var zoom = document.getElementById("zoom").value;
-    frame.src = pdfUrl(currentDocument) + "#page=" + page + "&zoom=" + zoom;
-    loading.hidden = false;
-    error.hidden = true;
-    frame.hidden = true;
-    clearTimeout(loadTimer);
-    loadTimer = setTimeout(function () {
-      if (!frame.hidden) return;
-      loading.hidden = true;
-      error.hidden = false;
-    }, 10000);
+    loadDocument(page, document.getElementById("zoom").value);
   }
 
   body.addEventListener("click", function (event) {
     var button = event.target.closest(".read-button");
     if (button) showReader(catalog[Number(button.dataset.number) - 1]);
   });
-  frame.addEventListener("load", function () { clearTimeout(loadTimer); loading.hidden = true; frame.hidden = false; });
+  frame.addEventListener("load", function () { loading.hidden = true; frame.hidden = false; });
   document.getElementById("retry-reader").addEventListener("click", updateReaderView);
   document.getElementById("close-reader").addEventListener("click", function () { reader.close(); frame.src = "about:blank"; });
   document.getElementById("go-page").addEventListener("click", updateReaderView);
