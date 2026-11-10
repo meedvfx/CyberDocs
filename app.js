@@ -5,10 +5,10 @@
     return {
       title: item.title,
       displayTitle: item.title.replace(/^\d+\.\s*/, ""),
-      searchTitle: item.title.toLocaleLowerCase(),
-      filename: item.filename,
+      searchTitle: item.title.toLowerCase(),
       category: item.category,
-      number: index + 1
+      number: index + 1,
+      url: "pdfs/" + encodeURIComponent(item.filename)
     };
   });
   var elements = {
@@ -28,6 +28,7 @@
   };
   var currentDocument = null;
   var loadingTimer = null;
+  var renderFrame = null;
   var collator = new Intl.Collator(undefined, { sensitivity: "base" });
 
   Array.from(new Set(catalog.map(function (item) { return item.category; })))
@@ -40,11 +41,11 @@
     });
 
   function pdfUrl(item) {
-    return "pdfs/" + encodeURIComponent(item.filename);
+    return item.url;
   }
 
   function render() {
-    var query = elements.search.value.trim().toLocaleLowerCase();
+    var query = elements.search.value.trim().toLowerCase();
     var selectedCategory = elements.category.value;
     var items = catalog.filter(function (item) {
       return (!query || item.searchTitle.includes(query)) &&
@@ -81,6 +82,14 @@
     elements.body.replaceChildren(fragment);
     elements.resultCount.textContent = items.length;
     elements.emptyState.hidden = items.length !== 0;
+  }
+
+  function scheduleRender() {
+    if (renderFrame !== null) return;
+    renderFrame = window.requestAnimationFrame(function () {
+      renderFrame = null;
+      render();
+    });
   }
 
   function showReader(item) {
@@ -133,8 +142,8 @@
     if (event.key === "Enter") updateReaderView();
   });
   elements.zoom.addEventListener("change", updateReaderView);
-  elements.search.addEventListener("input", render);
-  elements.category.addEventListener("change", render);
-  elements.sort.addEventListener("change", render);
+  elements.search.addEventListener("input", scheduleRender);
+  elements.category.addEventListener("change", scheduleRender);
+  elements.sort.addEventListener("change", scheduleRender);
   render();
 }());
