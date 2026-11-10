@@ -27,6 +27,7 @@
     zoom: document.getElementById("zoom")
   };
   var currentDocument = null;
+  var loadingTimer = null;
   var collator = new Intl.Collator(undefined, { sensitivity: "base" });
 
   Array.from(new Set(catalog.map(function (item) { return item.category; })))
@@ -93,9 +94,16 @@
 
   function loadDocument(page, zoom) {
     if (!currentDocument) return;
+    window.clearTimeout(loadingTimer);
     elements.loading.hidden = false;
     elements.frame.hidden = true;
     elements.frame.src = pdfUrl(currentDocument) + "#page=" + page + "&zoom=" + zoom;
+    loadingTimer = window.setTimeout(showFrame, 1500);
+  }
+
+  function showFrame() {
+    elements.loading.hidden = true;
+    elements.frame.hidden = false;
   }
 
   function updateReaderView() {
@@ -109,14 +117,15 @@
     if (button) showReader(catalog[Number(button.dataset.number) - 1]);
   });
   elements.frame.addEventListener("load", function () {
-    elements.loading.hidden = true;
-    elements.frame.hidden = false;
+    window.clearTimeout(loadingTimer);
+    showFrame();
   });
   var closeReader = document.getElementById("close-reader");
   var goPage = document.getElementById("go-page");
   closeReader.addEventListener("click", function () {
     elements.reader.close();
     elements.frame.src = "about:blank";
+    window.clearTimeout(loadingTimer);
     currentDocument = null;
   });
   goPage.addEventListener("click", updateReaderView);
