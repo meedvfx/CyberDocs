@@ -7,6 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/meedvfx/CyberDocs/actions/workflows/pages.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/meedvfx/CyberDocs/pages.yml?branch=main&style=flat-square&label=GitHub%20Pages" alt="GitHub Pages deployment status">
   </a>
   <img src="https://img.shields.io/badge/documents-99-2b6cb0?style=flat-square" alt="99 documents">
 </p>
@@ -33,6 +34,7 @@ The collection covers topics such as:
 - 📖 Read PDFs in the built-in browser reader
 - 🔎 Change PDF zoom and page
 - ⬇️ Download any PDF
+- ⚡ Fast client-side search and catalog rendering
 - 📱 Responsive layout for desktop and mobile
 - 🌐 Automatic deployment with GitHub Pages
 
@@ -73,7 +75,7 @@ git lfs pull
 python -m http.server 8000
 ```
 
-Then open <http://localhost:8000>.
+Then open <http://localhost:8000>. If the browser shows an older stylesheet after an update, use `Ctrl + F5` to perform a hard refresh.
 
 ### With VS Code
 
