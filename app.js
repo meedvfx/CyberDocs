@@ -29,6 +29,10 @@
     return "pdfs/" + encodeURIComponent(item.filename);
   }
 
+  function displayTitle(item) {
+    return item.title.replace(/^\d+\.\s*/, "");
+  }
+
   function render() {
     var query = search.value.trim().toLowerCase();
     var selectedCategory = category.value;
@@ -45,7 +49,7 @@
     items.forEach(function (item) {
       var row = document.createElement("tr");
       row.innerHTML = "<td>" + String(item.number).padStart(2, "0") + "</td>" +
-        "<td class=\"doc-title\">" + escapeHtml(item.title) + "</td>" +
+        "<td class=\"doc-title\">" + escapeHtml(displayTitle(item)) + "</td>" +
         "<td><span class=\"category-tag\">" + escapeHtml(item.category) + "</span></td>" +
         "<td><button class=\"read-button\" type=\"button\" data-number=\"" + item.number + "\">Read</button></td>";
       body.appendChild(row);
@@ -62,7 +66,7 @@
 
   function showReader(item) {
     currentDocument = item;
-    document.getElementById("reader-title").textContent = item.title;
+    document.getElementById("reader-title").textContent = displayTitle(item);
     document.getElementById("download-link").href = pdfUrl(item);
     document.getElementById("page-number").value = 1;
     loading.hidden = false;

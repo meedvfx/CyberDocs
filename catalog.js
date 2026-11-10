@@ -1,4 +1,4 @@
-﻿window.CYBERDOCS_CATALOG = [
+window.CYBERDOCS_CATALOG = [
     {
         "title":  "01. Advanced Penetration Testing",
         "filename":  "01. Advanced Penetration Testing.pdf",
