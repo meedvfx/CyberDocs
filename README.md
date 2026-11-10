@@ -10,7 +10,6 @@
     <img src="https://img.shields.io/github/actions/workflow/status/meedvfx/CyberDocs/pages.yml?branch=main&style=flat-square&label=GitHub%20Pages" alt="GitHub Pages deployment status">
   </a>
   <img src="https://img.shields.io/badge/documents-99-2b6cb0?style=flat-square" alt="99 documents">
-  <img src="https://img.shields.io/badge/HTML-CSS-JavaScript-172d4b?style=flat-square" alt="HTML CSS JavaScript">
   <img src="https://img.shields.io/badge/Git%20LFS-required-f4b942?style=flat-square" alt="Git LFS required">
 </p>
 
