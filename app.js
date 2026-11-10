@@ -77,20 +77,7 @@
     loading.hidden = false;
     error.hidden = true;
     frame.hidden = true;
-    fetch(pdfUrl(currentDocument), { headers: { Range: "bytes=0-4" }, cache: "no-store" })
-      .then(function (response) {
-        if (!response.ok) throw new Error("PDF request failed: " + response.status);
-        return response.arrayBuffer();
-      })
-      .then(function (buffer) {
-        var header = new TextDecoder().decode(new Uint8Array(buffer).slice(0, 5));
-        if (header !== "%PDF-") throw new Error("The server returned a Git LFS pointer instead of a PDF.");
-        frame.src = pdfUrl(currentDocument) + "#page=" + page + "&zoom=" + zoom;
-      })
-      .catch(function () {
-      loading.hidden = true;
-      error.hidden = false;
-      });
+    frame.src = pdfUrl(currentDocument) + "#page=" + page + "&zoom=" + zoom;
   }
 
   function updateReaderView() {
